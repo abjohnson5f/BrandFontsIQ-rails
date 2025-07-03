@@ -1,0 +1,56 @@
+# PostgreSQL. Versions 9.3 and up are supported.
+#
+# This application uses TWO database connections:
+# 1. Primary: Local PostgreSQL for Rails models, migrations, etc.
+# 2. Supabase: Remote PostgreSQL for company data (read-only)
+#
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+# Supabase connection configuration
+supabase: &supabase
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  host: <%= ENV.fetch("SUPABASE_HOST", "aws-0-us-east-1.pooler.supabase.com") %>
+  port: <%= ENV.fetch("SUPABASE_PORT", "5432") %>
+  database: <%= ENV.fetch("SUPABASE_DATABASE", "postgres") %>
+  username: <%= ENV.fetch("SUPABASE_USERNAME", "postgres.lewvdpmhuiahffhgvrrk") %>
+  password: <%= ENV.fetch("SUPABASE_PASSWORD", "") %>
+  sslmode: require
+  connect_timeout: 10
+
+development:
+  primary:
+    <<: *default
+    database: brandfontiq_rails_development
+    # Use DATABASE_URL from docker-compose.yml if available
+    url: <%= ENV["DATABASE_URL"] %>
+  
+  # Supabase connection for real company data
+  supabase:
+    <<: *supabase
+
+test:
+  primary:
+    <<: *default
+    database: brandfontiq_rails_test
+    # Use DATABASE_URL from docker-compose.yml if available
+    url: <%= ENV["DATABASE_URL"]&.gsub("_development", "_test") %>
+  
+  # Supabase connection (can use test credentials if needed)
+  supabase:
+    <<: *supabase
+
+production:
+  primary:
+    <<: *default
+    database: brandfontiq_rails_production
+    username: brandfontiq_rails
+    password: <%= ENV["BRANDFONTIQ_RAILS_DATABASE_PASSWORD"] %>
+  
+  # Supabase connection for production
+  supabase:
+    <<: *supabase

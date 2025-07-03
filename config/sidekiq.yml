@@ -1,0 +1,22 @@
+:verbose: true
+:concurrency: 5
+:timeout: 25
+
+# Set timeout to 25 seconds (Heroku and others limit to 30 seconds)
+:timeout: 25
+
+:queues:
+  - [critical, 10]
+  - [default, 5]
+  - [mailers, 3]
+  - [low, 1]
+
+development:
+  :concurrency: 5
+
+production:
+  :concurrency: 10
+
+# Sidekiq Pro features (if available)
+# :reliable_fetch: true
+# :semi_reliable_fetch: true

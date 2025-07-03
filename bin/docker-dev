@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+# Script to manage Docker development environment
+
+case "$1" in
+  up)
+    echo "Starting Docker development environment..."
+    docker-compose up
+    ;;
+  build)
+    echo "Building Docker images..."
+    docker-compose build
+    ;;
+  down)
+    echo "Stopping Docker containers..."
+    docker-compose down
+    ;;
+  setup)
+    echo "Setting up development environment..."
+    docker-compose build
+    docker-compose run --rm web bundle install
+    docker-compose run --rm web rails db:create
+    docker-compose run --rm web rails db:migrate
+    docker-compose run --rm web rails tailwindcss:install
+    echo "Setup complete! Run 'bin/docker-dev up' to start the application."
+    ;;
+  console)
+    echo "Starting Rails console..."
+    docker-compose run --rm web rails console
+    ;;
+  bash)
+    echo "Starting bash shell in web container..."
+    docker-compose run --rm web bash
+    ;;
+  migrate)
+    echo "Running database migrations..."
+    docker-compose run --rm web rails db:migrate
+    ;;
+  *)
+    echo "Usage: bin/docker-dev {up|build|down|setup|console|bash|migrate}"
+    exit 1
+    ;;
+esac
