@@ -30,7 +30,7 @@ gem "redis", ">= 4.0.1"
 gem "hiredis"
 
 # Use Sidekiq for background jobs
-gem "sidekiq", "~> 7.0"
+gem "sidekiq", "~> 8.0"
 
 # Use database-backed adapter for Action Cable (keeping this for now)
 gem "solid_cable"
